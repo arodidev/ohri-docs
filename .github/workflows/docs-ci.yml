@@ -28,26 +28,22 @@ jobs:
       - name: Cache dependencies
         id: cache
         uses: actions/cache@v3
-        # with:
-        #   path: "**/node_modules"
-        #   key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-
         with:
           path: |
-            ~/.pnpm
+            ~/.npm
             ${{ github.workspace }}/.next/cache
           # Generate a new cache whenever packages or source files change.
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/yarn.lock') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
           # If source files changed but packages didn't, rebuild from a prior cache.
           restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/yarn.lock') }}-
 
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
-        run: pnpm install
+        run: yarn install --immutable
 
       - name: Run build
-        run: pnpm build
+        run: yarn build
 
   docs_deployment:
     runs-on: ubuntu-latest
